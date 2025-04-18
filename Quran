@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>سورة</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom, #7a0000, #2d0000);
+      font-family: 'Arial', sans-serif;
+      color: white;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background-color: transparent;
+      color: white;
+      border: 2px solid white;
+      border-radius: 50%;
+      font-size: 20px;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.3s;
+    }
+
+    .back-button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+
+    h1 {
+      margin-top: 60px;
+      font-size: 28px;
+    }
+
+    .audio-player {
+      margin-top: 40px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .control-btn {
+      background-color: #c40000;
+      border: 2px solid white;
+      color: white;
+      font-size: 18px;
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .control-btn:hover {
+      transform: scale(1.1);
+      background-color: #a10000;
+    }
+  </style>
+</head>
+<body>
+
+  <button class="back-button" onclick="goBack()">‹</button>
+  <h1 id="surah-title">اسم السورة</h1>
+
+  <div class="audio-player">
+    <audio id="audio" controls autoplay>
+      <source id="audio-source" src="" type="audio/mpeg" />
+      متصفحك لا يدعم تشغيل الصوت.
+    </audio>
+
+    <div class="controls">
+      <button class="control-btn" onclick="prevSurah()">السابق</button>
+      <button class="control-btn" onclick="togglePlay()">تشغيل / إيقاف</button>
+      <button class="control-btn" onclick="nextSurah()">التالي</button>
+      <button class="control-btn" onclick="repeatSurah()">تكرار</button>
+      <button class="control-btn" onclick="randomSurah()">عشوائي</button>
+    </div>
+  </div>
+
+  <script>
+    const surahs = [
+      "001", "002", "003", "004", "005", "006", "007", "008", "009", "010",
+      "011", "012", "013", "014", "015", "016", "017", "018", "019", "020"
+    ];
+
+    let current = parseInt(localStorage.getItem("currentSurah")) || 0;
+
+    const audio = document.getElementById("audio");
+    const source = document.getElementById("audio-source");
+    const title = document.getElementById("surah-title");
+
+    const surahNames = {
+      "001": "الفاتحة", "002": "البقرة", "003": "آل عمران", "004": "النساء", "005": "المائدة",
+      "006": "الأنعام", "007": "الأعراف", "008": "الأنفال", "009": "التوبة", "010": "يونس",
+      "011": "هود", "012": "يوسف", "013": "الرعد", "014": "إبراهيم", "015": "الحجر",
+      "016": "النحل", "017": "الإسراء", "018": "الكهف", "019": "مريم", "020": "طه"
+    };
+
+    function loadSurah(index) {
+      current = index;
+      localStorage.setItem("currentSurah", current);
+      const num = surahs[current];
+      source.src = `https://server8.mp3quran.net/maher/${num}.mp3`;
+      title.textContent = `سورة ${surahNames[num]}`;
+      audio.load();
+      audio.play();
+    }
+
+    function goBack() {
+      window.location.href = "index.html";
+    }
+
+    function togglePlay() {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+
+    function nextSurah() {
+      if (current < surahs.length - 1) {
+        loadSurah(current + 1);
+      }
+    }
+
+    function prevSurah() {
+      if (current > 0) {
+        loadSurah(current - 1);
+      }
+    }
+
+    function repeatSurah() {
+      audio.currentTime = 0;
+      audio.play();
+    }
+
+    function randomSurah() {
+      const randomIndex = Math.floor(Math.random() * surahs.length);
+      loadSurah(randomIndex);
+    }
+
+    loadSurah(current);
+  </script>
+</body>
+</html>
